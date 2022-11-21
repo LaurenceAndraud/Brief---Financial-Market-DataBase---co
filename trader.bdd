@@ -1,0 +1,20 @@
+CREATE DATABASE finance
+
+CREATE TABLE finance.Trader
+(
+    nom varchar(20) PRIMARY KEY,
+    classe_actif varchar(20),
+    anneeExperience date,
+    nomEquipe varchar(20) FOREIGN KEY
+);
+
+INSERT INTO finance.Trader (nom, classe_actif, anneeExperience, nomEquipe)
+VALUES
+('Yannick', 'fixed income', 10, 'equipe1'),
+('Patrick', 'action', 10, 'equipe1'),
+('Cedrick', 'commodities', 10, 'equipe1'),
+('Jordan', 'change', 2, 'equipe2'),
+('Gaelle', 'exotic', 4, 'equip3'),
+('Georges', 'CDS', 20, 'equipe6');
+
+
