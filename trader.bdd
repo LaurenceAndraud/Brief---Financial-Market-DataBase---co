@@ -100,9 +100,6 @@ SELECT lieu FROM transaction WHERE prix > 150;
 # donner la liste des transactions se déroulant à Paris pour moins de 50e
 FROM transaction WHERE prix < 50 AND lieu LIKE '%PARIS%'; 
 
-#
-WHERE anneeExperience < 3 AND style LIKE '%arbitrage statistique%'
-
 # donner la liste des marchés(lieux) ayant eu lieu en 2014
 SELECT lieu FROM transaction WHERE dates LIKE '%2014%'; 
 
@@ -124,3 +121,6 @@ WHERE style LIKE 'market making%' AND dates LIKE '%2021%';
 
 # donner le prix moyen des actifs des traités par les traders market maker par zone géographique de transaction
 SELECT prix, lieu FROM transaction LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe WHERE style LIKE '%market making%';
+
+# donner la liste des classes d'actifs des traders qui ont effectué des transactions le 1er janvier 2016 sous le management de Smith
+SELECT classe_actif FROM trader LEFT JOIN equipe ON trader.nomEquipe = equipe.nEquipe LEFT JOIN transaction on trader.nomEquipe = transaction.nomEquipe WHERE dates LIKE '%2016-01-01%' AND chef LIKE '%Smith%';
