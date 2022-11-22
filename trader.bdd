@@ -2,10 +2,12 @@ CREATE DATABASE finance
 
 CREATE TABLE finance.Trader
 (
-    nom varchar(20) PRIMARY KEY,
-    classe_actif varchar(20),
+    nom varchar(30) PRIMARY KEY,
+    classe_actif varchar(30),
     anneeExperience date,
-    nomEquipe varchar(20) FOREIGN KEY
+    nomEquipe varchar(30),
+    PRIMARY KEY (nom),
+    FOREIGN KEY (nomEquipe) REFERENCES nomEquipe(nomEquipe)
 );
 
 INSERT INTO finance.Trader (nom, classe_actif, anneeExperience, nomEquipe)
@@ -17,4 +19,41 @@ VALUES
 ('Gaelle', 'exotic', 4, 'equip3'),
 ('Georges', 'CDS', 20, 'equipe6');
 
+CREATE TABLE finance.Equipe 
+(
+    nom varchar(30) PRIMARY KEY,
+    style varchar(30),
+    chef varchar(30)
+);
+
+INSERT INTO finance.Equipe (nom, style, chef)
+VALUES
+('equipe1', 'marketing making', 'leonardo'),
+('equipe2', 'arbitrage', 'michaelgelo'),
+('equipe3', 'trading de volatilite', 'raphael'),
+('equipe4', 'trading haute frequence', 'donatello'),
+('equipe5', 'arbitrage satistique', 'Smith'),
+('equipe6', 'arbitrage statistique', 'Smith'),
+('equipe7', 'strategie fond de fond', 'Ray');
+
+CREATE TABLE finance.Transaction
+(
+    nom varchar(30) PRIMARY KEY,
+    nomEquipe varchar(30) FOREIGN KEY,
+    date date,
+    lieu varchar(30),
+    prix int,
+);
+
+INSERT INTO finance.Transaction (nom, nomEquipe, date, lieu, prix)
+VALUES
+('AXA SA', 'equipe1', 2021-06-15, 'PARIS', 26),
+('TotalEnergies', 'equipe2', 2004-09-03, 'PARIS', 57),
+('Apple Inc', 'equipe1', 2014-09-05, 'USA', 150),
+('Dubai Elec', 'equipe3', 2020-11-22, 'DUBAI', 1),
+('Amazon', 'equipe3', 2010-07-12, 'USA', 100),
+('Naspers', 'equipe2', 1997-08-16, 'SOUTH AFRICA', 120),
+('PetroChina', 'equipe5', 2019-04-20, 'HONG KONG', 10),
+('ETF Vanguard', 'equipe7', 2015-02-22, 'LA', 200),
+('Dassault Aviation', 'equipe6', 2016-01-01, 'PARIS', 140);
 
