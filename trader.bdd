@@ -1,13 +1,13 @@
-CREATE DATABASE finance
+CREATE DATABASE finance;
 
 CREATE TABLE finance.Trader
 (
-    nom varchar(30) PRIMARY KEY,
-    classe_actif varchar(30),
-    anneeExperience date,
-    nomEquipe varchar(30),
+    nom VarChar(30),
+    classe_actif VarChar(30),
+    anneeExperience int,
+    nomEquipe VarChar(30),
     PRIMARY KEY (nom),
-    FOREIGN KEY (nomEquipe) REFERENCES nomEquipe(nomEquipe)
+    FOREIGN KEY (nomEquipe) REFERENCES finance.nomEquipe(nom)
 );
 
 INSERT INTO finance.Trader (nom, classe_actif, anneeExperience, nomEquipe)
@@ -21,9 +21,10 @@ VALUES
 
 CREATE TABLE finance.Equipe 
 (
-    nom varchar(30) PRIMARY KEY,
-    style varchar(30),
-    chef varchar(30)
+    nom VarChar(30),
+    style VarChar(30),
+    chef VarChar(30),
+    PRIMARY KEY (nom)
 );
 
 INSERT INTO finance.Equipe (nom, style, chef)
@@ -38,14 +39,16 @@ VALUES
 
 CREATE TABLE finance.Transaction
 (
-    nom varchar(30) PRIMARY KEY,
-    nomEquipe varchar(30) FOREIGN KEY,
-    date date,
-    lieu varchar(30),
+    nom VarChar(30),
+    nomEquipe VarChar(30),
+    dates int,
+    lieu VarChar(30),
     prix int,
+    PRIMARY KEY (nom),
+    FOREIGN KEY (nomEquipe) REFERENCES nomEquipe(nomEquipe)
 );
 
-INSERT INTO finance.Transaction (nom, nomEquipe, date, lieu, prix)
+INSERT INTO finance.Transaction (nom, nomEquipe, dates, lieu, prix)
 VALUES
 ('AXA SA', 'equipe1', 2021-06-15, 'PARIS', 26),
 ('TotalEnergies', 'equipe2', 2004-09-03, 'PARIS', 57),
@@ -56,4 +59,5 @@ VALUES
 ('PetroChina', 'equipe5', 2019-04-20, 'HONG KONG', 10),
 ('ETF Vanguard', 'equipe7', 2015-02-22, 'LA', 200),
 ('Dassault Aviation', 'equipe6', 2016-01-01, 'PARIS', 140);
+
 
