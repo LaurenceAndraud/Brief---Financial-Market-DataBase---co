@@ -122,6 +122,5 @@ FROM transaction
 LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe
 WHERE style LIKE 'market making%' AND dates LIKE '%2021%';
 
-#
-
-
+# donner le prix moyen des actifs des traités par les traders market maker par zone géographique de transaction
+SELECT prix, lieu FROM transaction LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe WHERE style LIKE '%market making%';
