@@ -16,7 +16,7 @@ VALUES
 ('Patrick', 'action', 10, 'equipe1'),
 ('Cedrick', 'commodities', 10, 'equipe1'),
 ('Jordan', 'change', 2, 'equipe2'),
-('Gaelle', 'exotic', 4, 'equip3'),
+('Gaelle', 'exotic', 4, 'equipe3'),
 ('Georges', 'CDS', 20, 'equipe6');
 
 CREATE TABLE finance.Equipe 
@@ -59,5 +59,69 @@ VALUES
 ('PetroChina', 'equipe5', 2019-04-20, 'HONG KONG', 10),
 ('ETF Vanguard', 'equipe7', 2015-02-22, 'LA', 200),
 ('Dassault Aviation', 'equipe6', 2016-01-01, 'PARIS', 140);
+
+
+# lister le nom des traders, et leurs classes actifs
+SELECT nom, classe_actif FROM trader;
+
+# lister le nom des traders, et leurs classes actifs, si jeunes (-5ans d'expérience)
+SELECT nom, classe_actif FROM trader WHERE (anneeExperience < 5);
+
+# lister les différentes classes d'actifs de l'équipe 1
+ SELECT classe_actif FROM trader WHERE (nomEquipe LIKE '%equipe1%');
+
+# donner les informations sur les traders commodities
+SELECT nom, anneeExperience, nomEquipe FROM trader WHERE (classe_actif LIKE '%commodities%');
+
+# lister les classes d'actifs des traders qui ont plus de 20 ans d'expériences
+SELECT classe_actif FROM trader WHERE (anneeExperience > 20);
+
+# lister les noms des traders ayant entre 5 et 10 ans d'expériences
+SELECT nom FROM trader WHERE (anneeExperience >= 5) AND (anneeExperience <= 10);
+
+# lister les classes d'actifs commençant par "ch"
+SELECT classe_actif FROM trader WHERE classe_actif LIKE '%ch%'; 
+
+# lister les noms d'equipes utilisant l'arbitrage statistique
+SELECT nom FROM equipe WHERE style LIKE '%arbitrage statistique%'; 
+
+# lister les noms d'équipe dont le chef est Smith
+SELECT nom FROM equipe WHERE chef LIKE '%Smith%'; 
+
+# lister les transaction triées par ordre alphabétique
+SELECT nom FROM transaction ORDER BY nom; 
+
+# lister les transactions se déroulant le 20 avril 2019 à Hong Kong
+SELECT nom, nomEquipe, lieu, prix FROM transaction WHERE dates LIKE '%2019-04-20%' AND lieu LIKE '%HONG KONG%'; 
+
+# donner la liste des marchés(lieux) où le prix est supérieur à 150e
+SELECT lieu FROM transaction WHERE prix > 150; 
+
+# donner la liste des transactions se déroulant à Paris pour moins de 50e
+FROM transaction WHERE prix < 50 AND lieu LIKE '%PARIS%'; 
+
+#
+WHERE anneeExperience < 3 AND style LIKE '%arbitrage statistique%'
+
+# donner la liste des marchés(lieux) ayant eu lieu en 2014
+SELECT lieu FROM transaction WHERE dates LIKE '%2014%'; 
+
+# lister les noms et classes d'actifs des traders ayant plus de 3 ans d'expérience 
+# et faisant partie d'une équipe arbitrage statistique
+ALTER TABLE equipe
+CHANGE nom nEquipe VarChar(30)
+SELECT nom, classe_actif FROM trader LEFT JOIN equipe ON trader.nomEquipe = equipe.nEquipe
+WHERE anneeExperience > 3 AND style LIKE '%arbitrage statistique%'; 
+
+# donner les marchés(lieux) triés par ordre alphabétique, des transactions effectuées dans l'équipe du chef Smith avec un prix inférieur à 20
+SELECT lieu FROM transaction LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe WHERE chef LIKE '%Smith%' AND prix < 20; 
+
+# donner le nombre de marchés sur lesquels intervenaient les traders de style market making en 2021
+SELECT COUNT (*)
+FROM transaction 
+LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe
+WHERE style LIKE 'market making%' AND dates LIKE '%2021%';
+
+#
 
 
