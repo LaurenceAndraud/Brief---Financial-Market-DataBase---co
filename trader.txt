@@ -1,0 +1,203 @@
+CREATE DATABASE finance;
+
+CREATE TABLE finance.Trader
+(
+    nom VarChar(30),
+    classe_actif VarChar(30),
+    anneeExperience int,
+    nomEquipe VarChar(30),
+    PRIMARY KEY (nom),
+    FOREIGN KEY (nomEquipe) REFERENCES finance.nomEquipe(nom)
+);
+
+INSERT INTO finance.Trader (nom, classe_actif, anneeExperience, nomEquipe)
+VALUES
+('Yannick', 'fixed income', 10, 'equipe1'),
+('Patrick', 'action', 10, 'equipe1'),
+('Cedrick', 'commodities', 10, 'equipe1'),
+('Jordan', 'change', 2, 'equipe2'),
+('Gaelle', 'exotic', 4, 'equipe3'),
+('Georges', 'CDS', 20, 'equipe6');
+
+CREATE TABLE finance.Equipe 
+(
+    nom VarChar(30),
+    style VarChar(30),
+    chef VarChar(30),
+    PRIMARY KEY (nom)
+);
+
+INSERT INTO finance.Equipe (nom, style, chef)
+VALUES
+('equipe1', 'marketing making', 'leonardo'),
+('equipe2', 'arbitrage', 'michaelgelo'),
+('equipe3', 'trading de volatilite', 'raphael'),
+('equipe4', 'trading haute frequence', 'donatello'),
+('equipe5', 'arbitrage satistique', 'Smith'),
+('equipe6', 'arbitrage statistique', 'Smith'),
+('equipe7', 'strategie fond de fond', 'Ray');
+
+CREATE TABLE finance.Transaction
+(
+    nom VarChar(30),
+    nomEquipe VarChar(30),
+    dates int,
+    lieu VarChar(30),
+    prix int,
+    PRIMARY KEY (nom),
+    FOREIGN KEY (nomEquipe) REFERENCES nomEquipe(nomEquipe)
+);
+
+INSERT INTO finance.Transaction (nom, nomEquipe, dates, lieu, prix)
+VALUES
+('AXA SA', 'equipe1', 2021-06-15, 'PARIS', 26),
+('TotalEnergies', 'equipe2', 2004-09-03, 'PARIS', 57),
+('Apple Inc', 'equipe1', 2014-09-05, 'USA', 150),
+('Dubai Elec', 'equipe3', 2020-11-22, 'DUBAI', 1),
+('Amazon', 'equipe3', 2010-07-12, 'USA', 100),
+('Naspers', 'equipe2', 1997-08-16, 'SOUTH AFRICA', 120),
+('PetroChina', 'equipe5', 2019-04-20, 'HONG KONG', 10),
+('ETF Vanguard', 'equipe7', 2015-02-22, 'LA', 200),
+('Dassault Aviation', 'equipe6', 2016-01-01, 'PARIS', 140);
+
+
+# lister le nom des traders, et leurs classes actifs
+SELECT nom, classe_actif 
+FROM trader;
+
+# lister le nom des traders, et leurs classes actifs, si jeunes (-5ans d'expérience)
+SELECT nom, classe_actif 
+FROM trader 
+WHERE (anneeExperience < 5);
+
+# lister les différentes classes d'actifs de l'équipe 1
+SELECT classe_actif 
+FROM trader 
+WHERE (nomEquipe LIKE '%equipe1%');
+
+# donner les informations sur les traders commodities
+SELECT nom, anneeExperience, nomEquipe 
+FROM trader 
+WHERE (classe_actif LIKE '%commodities%');
+
+# lister les classes d'actifs des traders qui ont plus de 20 ans d'expériences
+SELECT classe_actif 
+FROM trader 
+WHERE (anneeExperience > 20);
+
+# lister les noms des traders ayant entre 5 et 10 ans d'expériences
+SELECT nom 
+FROM trader 
+WHERE (anneeExperience >= 5) AND (anneeExperience <= 10);
+
+# lister les classes d'actifs commençant par "ch"
+SELECT classe_actif 
+FROM trader 
+WHERE classe_actif LIKE '%ch%'; 
+
+# lister les noms d'equipes utilisant l'arbitrage statistique
+SELECT nom 
+FROM equipe 
+WHERE style LIKE '%arbitrage statistique%'; 
+
+# lister les noms d'équipe dont le chef est Smith
+SELECT nom 
+FROM equipe 
+WHERE chef LIKE '%Smith%'; 
+
+# lister les transaction triées par ordre alphabétique
+SELECT nom 
+FROM transaction 
+ORDER BY nom; 
+
+# lister les transactions se déroulant le 20 avril 2019 à Hong Kong
+SELECT nom, nomEquipe, lieu, prix 
+FROM transaction 
+WHERE dates LIKE '%2019-04-20%' AND lieu LIKE '%HONG KONG%'; 
+
+# donner la liste des marchés(lieux) où le prix est supérieur à 150e
+SELECT lieu 
+FROM transaction 
+WHERE prix > 150; 
+
+# donner la liste des transactions se déroulant à Paris pour moins de 50e
+FROM transaction 
+WHERE prix < 50 AND lieu LIKE '%PARIS%'; 
+
+# donner la liste des marchés(lieux) ayant eu lieu en 2014
+SELECT lieu
+FROM transaction 
+WHERE dates LIKE '%2014%'; 
+
+# lister les noms et classes d'actifs des traders ayant plus de 3 ans d'expérience 
+# et faisant partie d'une équipe arbitrage statistique
+ALTER TABLE equipe
+CHANGE nom nEquipe VarChar(30)
+SELECT nom, classe_actif 
+FROM trader 
+LEFT JOIN equipe ON trader.nomEquipe = equipe.nEquipe
+WHERE anneeExperience > 3 AND style LIKE '%arbitrage statistique%'; 
+
+# donner les marchés(lieux) triés par ordre alphabétique, des transactions effectuées dans l'équipe du chef Smith avec un prix inférieur à 20
+SELECT lieu 
+FROM transaction 
+LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe 
+WHERE chef LIKE '%Smith%' AND prix < 20; 
+
+# donner le nombre de marchés sur lesquels intervenaient les traders de style market making en 2021
+SELECT COUNT (*)
+FROM transaction 
+LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe
+WHERE style LIKE 'market making%' AND dates LIKE '%2021%';
+
+# donner le prix moyen des actifs des traités par les traders market maker par zone géographique de transaction
+SELECT prix, lieu 
+FROM transaction 
+LEFT JOIN equipe ON transaction.nomEquipe = equipe.nEquipe 
+WHERE style LIKE '%market making%';
+
+# donner la liste des classes d'actifs des traders qui ont effectué des transactions le 1er janvier 2016 sous le management de Smith
+SELECT classe_actif 
+FROM trader 
+LEFT JOIN equipe ON trader.nomEquipe = equipe.nEquipe 
+LEFT JOIN transaction on trader.nomEquipe = transaction.nomEquipe 
+WHERE dates LIKE '%2016-01-01%' AND chef LIKE '%Smith%';
+
+# donner le nombre moyen d'années d'expérience des traders d'action par style de stratégie d'équipe
+SELECT AVG(anneeExperience)
+FROM trader 
+LEFT JOIN equipe ON trader.nomEquipe = equipe.nEquipe 
+LEFT JOIN transaction on trader.nomEquipe = transaction.nomEquipe 
+GROUP BY style;
+
+# donner la liste des noms et classes d'actifs des traders ayant plus de 3 ans d'expérience et faisant partie d'une équipe de style arbitrage, par ordre alphabétique
+SELECT nom, classe_actif, style, anneeExperience 
+FROM trader, equipe 
+WHERE (trader.nomEquipe = equipe.nEquipe) AND (anneeExperience > 3 AND style LIKE '%arbitrage%') 
+ORDER BY nom; 
+
+# donner les différents marchés(lieux), triés par ordre alphabétique, des transactions effectuées dans l'équipe du chef Smith avec un prix inférieur à 20
+SELECT lieu 
+FROM transaction, equipe 
+WHERE (transaction.nomEquipe = equipe.nEquipe) AND (chef = '%Smith%' AND prix < 20) 
+ORDER BY lieu;
+
+# donner le nombre de marchés sur lesquels intervenaient les traders de style Market Making en 2021
+SELECT COUNT(lieu)
+FROM transaction, equipe 
+WHERE (transaction.nomEquipe = equipe.nEquipe) AND (style = '%market making%' AND dates = '%2021%');
+
+# Donner le prix moyen des actifs des traités par les traders market maker par zone géographique de transaction
+SELECT AVG(prix), lieu 
+FROM transaction, equipe 
+WHERE (transaction.nomEquipe = equipe.nEquipe) AND (style = '%market making%'); 
+
+# Donner la liste des classes d’actifs des traders qui ont effectué des transactions le 1ER Janvier 2016 sous le management de monsieur Smith
+SELECT classe_actif
+FROM trader, transaction, equipe
+WHERE (transaction.nomEquipe = trader.nomEquipe) AND (equipe.nEquipe = trader.nomEquipe) AND (dates = '2016-01-01') AND (chef = '%Smith%');
+
+# Donner la liste des classes d’actifs des traders qui ont effectué des transactions le 1ER Janvier 2016 sous le management de monsieur Smith
+SELECT classe_actif
+FROM trader, transaction, equipe
+WHERE (transaction.nomEquipe = trader.nomEquipe) AND (equipe.nEquipe = trader.nomEquipe) AND (dates = '2016-01-01') AND (chef = '%Smith%');
